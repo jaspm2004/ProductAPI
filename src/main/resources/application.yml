@@ -1,0 +1,12 @@
+spring:
+    application:
+        name: productapi
+
+datasource:
+    url: jdbc:h2:~/pismotest
+    username: test
+    password: 1234
+
+server:
+    port: 8080
+    context-path: /productapi

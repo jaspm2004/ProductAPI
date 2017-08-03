@@ -13,10 +13,11 @@ Oferece uma interface REST para cadastro e busca de produtos.
 ```
 $ git clone https://github.com/jaspm2004/ProductAPI
 $ mvn clean install
+$ mvn dependency:copy-dependencies
 $ cd target
 $ java -jar .\ProductAPI-1.0.0.jar
 ```
-API REST fica em http://localhost:8080/productapi/products
+A API REST fica em http://localhost:8080/productapi/products
 
 
 ### Para importar este projeto utilizando IDE

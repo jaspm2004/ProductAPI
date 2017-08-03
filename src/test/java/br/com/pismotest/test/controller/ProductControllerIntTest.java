@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Teste integrado do controller
+ * Teste integrado
  * 
  * @author José San Pedro
  */
@@ -35,12 +35,14 @@ public class ProductControllerIntTest {
     private ProductRepository repository;
     
     @Test
-    public void givenProducts_whenGetProducts_thenReturnJsonArray() throws Exception {
+    public void givenProducts_whenGetProducts_thenStatus200() throws Exception {
+        // given
         Product tomate = new Product();
         tomate.setName("tomate");
         tomate.setStock(3);
         repository.save(tomate);
 
+        // then
         mvc.perform(get("/products")
           .contentType(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())

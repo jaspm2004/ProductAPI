@@ -1,4 +1,3 @@
-
 package br.com.pismotest.products.controllers;
 
 import br.com.pismotest.products.domain.Product;
@@ -22,31 +21,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/products")
 public class ProductController {
 
-    /**
-     * Repository to access the product data.
-     */
     @Autowired
     private ProductRepository repository;
     
     /**
-     * Returns a list of Product according to the given name.
+     * Retorna uma lista de produtos filtrando pelo nome. 
+     * Caso não seja preenchido o nome na pesquisa, 
+     * retorna a lista de todos os produtos
      * 
-     * @param name The name to be filtered.
-     * @return Http Status 200 if a product List according to the given name was found, 
-     * 404 if a product with the given name was not found.
+     * @param name  nome para filtrar a pesquisa, o defaul é ""
+     * @return      200 se a pesquisa é executada com sucesso, 
+     *              404 se não existe produto com esse nome, 
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity listByName(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
-        // if the patameter name is omited
+        // se o name é null, retorna todos os produtos
         if (name.isEmpty()) {
             return new ResponseEntity(repository.findAll(), HttpStatus.OK);
         }
         
-        // if the patameter name is passed
+        // se o name não é null, filtra
         List<Product> listByName = repository.findByName(name);
         if (listByName.isEmpty()) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+        
         return new ResponseEntity(listByName, HttpStatus.OK);
     }
     
@@ -60,7 +59,7 @@ public class ProductController {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ResponseEntity listById(@PathVariable("id") Long id) {
-        // se o id não é preenchido
+        // o id não pode ser null
         if (id == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
@@ -74,21 +73,21 @@ public class ProductController {
     }
     
     /**
-     * Crates a new Product.
+     * Insere um novo produto
      * 
-     * @param product The product to be created.
-     * @return 409 if the product already exists,
-     * 400 if product has invalid data,
-     * 200 if the product was created.
+     * @param product o produto que será inserido
+     * @return      200 se o produto é inserido com sucesso, 
+     *              400 se falta informação para inserir,
+     *              409 se já existe um produto com o mesmo nome
      */
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity createProduct(@RequestBody Product product) {
-        // empty product name or stock not allowed
+        // o nome e o stock não podem ser null
         if (product.getName().isEmpty() || product.getStock() == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         
-        // check if product already exists
+        // verifica se já existe um produto com esse nome
         if (repository.existsByName(product.getName())) {
             return new ResponseEntity(HttpStatus.CONFLICT);
         } else {
@@ -97,11 +96,12 @@ public class ProductController {
     }
     
     /**
-     * Updates the quantity of Products in the stock.
+     * Atualiza o stock do produto
      * 
-     * @param id The product identifier.
-     * @param stock The quantity to be increased/decreased.
-     * @return 
+     * @param id    o id do produto que será atualizado
+     * @param stock a quantidade que será acrescentada/decrementada do stock
+     * @return      200 se o stock é atualizado com sucesso, 
+     *              404 se não existe produto com esse id,  
      */
     @RequestMapping(value = "{id}/stock/{stock}", method = RequestMethod.PATCH)
     public ResponseEntity uptateStock(@PathVariable("id") Long id, @PathVariable("stock") Integer stock) {
@@ -115,6 +115,7 @@ public class ProductController {
         
         product.setStock(product.getStock() + stock);
         product = repository.save(product);
+        
         return new ResponseEntity(product, HttpStatus.OK);
     }
 }
